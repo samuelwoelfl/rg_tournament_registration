@@ -1,7 +1,7 @@
 # Roundnet Germany Tournament Registration Script
 
 ## Requirements
-- Firefox Browser installiert
+- Firefox Browser installed
 - Python
 - Selenium package (https://pypi.org/project/selenium/)
 
