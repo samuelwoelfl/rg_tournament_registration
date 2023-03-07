@@ -38,13 +38,14 @@ own_skilllevel = 'Intermediate'  # 'Intermediate'
 ##################################################################################
 
 def scroll_down():
-    body = bot.find_element_by_css_selector("body")
+    body = bot.find_element(By.CSS_SELECTOR, "body")
     body.send_keys(Keys.END)
     bot.execute_script("window.scrollTo(0, document.body.scrollHeight);")
     try:
-        bot.find_element_by_css_selector("#content").send_keys(Keys.END)
+        bot.find_element(By.CSS_SELECTOR, "#content").send_keys(Keys.END)
     except:
         pass
+
 
 
 ##################################################################################
@@ -59,9 +60,29 @@ try:
 except TimeoutException:
     print(f'Page loading took to much time - increase delay to give the browser more time. Otherwise there could be an error message from roundnet germany, you will see this as a callout message at the top of the page')
     exit()
-cookie_accept_button = bot.find_element_by_css_selector('.cc-compliance a.cc-btn.cc-dismiss')
+cookie_accept_button = bot.find_element(By.CSS_SELECTOR, '.cc-compliance a.cc-btn.cc-dismiss')
 cookie_accept_button.click()
-bot.maximize_window()
+#bot.maximize_window()
+
+
+
+##################################################################################
+# -------------------------- set language to german ---------------------------- #
+##################################################################################
+
+language_selector = bot.find_element(By.CSS_SELECTOR, 'a[href="#switchlanguage"]')
+language_selector.click()
+dropdown_input_lang = bot.find_element(By.CSS_SELECTOR, ".modal#switchlanguage input.select-dropdown")
+dropdown_input_lang.click()
+dropdown_options_lang = bot.find_elements(By.CSS_SELECTOR, "ul.dropdown-content li")
+
+for o in dropdown_options_lang:
+    option_html = o.get_attribute("innerHTML")
+    if "Deutsch (de)" in option_html:
+        o.click()
+
+submit_button_lang = bot.find_element(By.CSS_SELECTOR, '.modal#switchlanguage input[type="submit"]')
+submit_button_lang.click()
 
 
 
@@ -69,14 +90,14 @@ bot.maximize_window()
 # ----------------- find registration link for wanted division ----------------- #
 ##################################################################################
 
-register_section = bot.find_element_by_xpath("//h4[text()='Anmeldung']/../../../following-sibling::div[@class='row']")
-divisions_section = register_section.find_element_by_xpath("/descendant::ul[@class='collapsible']")
-divisions_list = divisions_section.find_elements_by_css_selector("li")
+register_section = bot.find_element(By.XPATH, "//h4[text()='Anmeldung']/../../../following-sibling::div[@class='row']")
+divisions_section = register_section.find_element(By.XPATH, "/descendant::ul[@class='collapsible']")
+divisions_list = divisions_section.find_elements(By.CSS_SELECTOR, "li")
 
 # search for wanted division
 division_number = -1
 for i, d in enumerate(divisions_list):
-    name = d.find_element_by_css_selector("div.col b").get_attribute("innerHTML")
+    name = d.find_element(By.CSS_SELECTOR, "div.col b").get_attribute("innerHTML")
     if name.lower() == division.lower():
         division_number = i
 
@@ -89,7 +110,7 @@ else:
     exit()
 
 # get registration link for wanted division
-register_button = divisions_list[division_number].find_element_by_css_selector("div div.col:last-child a")
+register_button = divisions_list[division_number].find_element(By.CSS_SELECTOR, "div div.col:last-child a")
 register_link = register_button.get_attribute("href")
 
 
@@ -107,9 +128,9 @@ except:
     print('Page loading took to much time - increase delay to give the browser more time. Otherwise there could be an error message from roundnet germany, you will see this as a callout message at the top of the page')
     exit()
 # find input fields and submit button
-username_input = bot.find_element_by_css_selector("input#id_username")
-password_input = bot.find_element_by_css_selector("input#id_password")
-submit_button_login = bot.find_element_by_css_selector('button[type="submit"]')
+username_input = bot.find_element(By.CSS_SELECTOR, "input#id_username")
+password_input = bot.find_element(By.CSS_SELECTOR, "input#id_password")
+submit_button_login = bot.find_element(By.CSS_SELECTOR, 'button[type="submit"]')
 # fill input fields and click submit button
 username_input.clear()
 username_input.send_keys(rg_username)
@@ -138,7 +159,7 @@ while registration_open is False:
     bot.get(register_link)
 
     try:
-        registration_form = bot.find_element_by_css_selector('div.reg-form')
+        registration_form = bot.find_element(By.CSS_SELECTOR, 'div.reg-form')
         registration_open = True
     except:
         if reload_count == 0:
@@ -163,12 +184,12 @@ print('Registration is open! Starting to register.')
 ##################################################################################
 
 # find input fields and submit button
-teammate_rg_id_input = bot.find_element_by_css_selector("input#id_teammate_rg_id")
-teammate_name_input = bot.find_element_by_css_selector("input#id_teammate_secret")
-teamname_input = bot.find_element_by_css_selector("input#id_team_name")
-skill_container = bot.find_element_by_css_selector("#id_skill_container")
-skill_input = skill_container.find_element_by_css_selector("input.select-dropdown.dropdown-trigger")
-submit_button_registration = bot.find_element_by_css_selector('button[type="submit"]')
+teammate_rg_id_input = bot.find_element(By.CSS_SELECTOR, "input#id_teammate_rg_id")
+teammate_name_input = bot.find_element(By.CSS_SELECTOR, "input#id_teammate_secret")
+teamname_input = bot.find_element(By.CSS_SELECTOR, "input#id_team_name")
+skill_container = bot.find_element(By.CSS_SELECTOR, "#id_skill_container")
+skill_input = skill_container.find_element(By.CSS_SELECTOR, "input.select-dropdown.dropdown-trigger")
+submit_button_registration = bot.find_element(By.CSS_SELECTOR, 'button[type="submit"]')
 
 # fill input fields
 teammate_rg_id_input.clear()
@@ -182,8 +203,8 @@ teamname_input.send_keys(teamname)
 scroll_down()
 skill_input.click()
 scroll_down()
-dropdown_content = skill_container.find_element_by_css_selector("ul.dropdown-content")
-dropdown_options = dropdown_content.find_elements_by_css_selector("li")
+dropdown_content = skill_container.find_element(By.CSS_SELECTOR, "ul.dropdown-content")
+dropdown_options = dropdown_content.find_elements(By.CSS_SELECTOR, "li")
 for o in dropdown_options:
     option_html = o.get_attribute("innerHTML")
     if own_skilllevel in option_html:
@@ -202,11 +223,11 @@ except:
     exit()
 
 # click image rights toggle
-switch_image_rights = bot.find_element_by_css_selector("label.switch")
+switch_image_rights = bot.find_element(By.CSS_SELECTOR, "label.switch")
 switch_image_rights.click()
 
 # click final button if in RUN mode
-confirm_button = bot.find_element_by_css_selector("a#confirm-button")
+confirm_button = bot.find_element(By.CSS_SELECTOR, "a#confirm-button")
 if mode == 'RUN':
     confirm_button.click()
     print("Registration done")
